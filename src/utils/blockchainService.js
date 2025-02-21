@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import contractData from "../../artifacts/contracts/UserHashStorage.sol/UserHashStorage.json" assert { type: "json" };
+import contractData from "../../artifacts/contracts/UserHashStorage.sol/UserHashStorage.json";
 
 dotenv.config();
 
