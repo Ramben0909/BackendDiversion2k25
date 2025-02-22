@@ -9,23 +9,8 @@ config();
 
 const app = express();
 
-app.set("trust proxy", 1);
-app.use(express.json());
-app.use(cookieParser(process.env.COOKIE_SECRET));
 // Middlewares
-app.use(
-  cors({
-    origin: "https://trackintel.pages.dev",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-    ],
-  })
-);
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 

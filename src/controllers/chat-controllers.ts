@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User.js";
 import axios from "axios";
-import { config } from "dotenv";
+import dotnev from "dotenv";
 
-config();
+dotnev.config();
 
 const SESSION_ID = "hardcoded-session-id-12339";
 
@@ -34,10 +34,9 @@ export const generateChatCompletion = async (
       sessionid: SESSION_ID,
     };
 
-    // Send the request to both APIs
     const [response1, response2] = await Promise.all([
-      axios.post("https://query-bridge-production.up.railway.app//api/v1/text", payload),
-      axios.post("https://query-bridge-production.up.railway.app//api/v1/sql", payload),
+      axios.post(process.env.Link1 as string, payload),
+      axios.post(process.env.Link2 as string, payload),
     ]);
 
     const chatResponse1 = response1.data.response;
