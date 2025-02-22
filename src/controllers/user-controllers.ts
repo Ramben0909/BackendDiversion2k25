@@ -5,6 +5,7 @@ import { hash, compare } from "bcrypt";
 import { createToken } from "../utils/token-manager.js";
 import { COOKIE_NAME } from "../utils/constants.js";
 import { storeUserHash, getUserHash } from "../utils/blockchainService.js";
+import { getCookieOptions } from '../utils/cookieconfig.js';
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -54,24 +55,12 @@ export const userSignup = async (req: Request, res: Response, next: NextFunction
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    res.clearCookie(COOKIE_NAME, { 
-      httpOnly: true, 
-      domain: "localhost", 
-      signed: true, 
-      path: "/" 
-    });
-
+    
     const token = createToken(user._id.toString(), user.email, "7d");
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-    res.cookie(COOKIE_NAME, token, {
-      path: "/",
-      domain: "localhost",
-      expires,
-      httpOnly: true,
-      signed: true,
-    });
+    res.clearCookie(COOKIE_NAME, getCookieOptions());
+    res.cookie(COOKIE_NAME, token, getCookieOptions());
 
+     
     return res.status(201).json({ message: "OK", name: user.name, email: user.email });
   } catch (error) {
     console.log(error);
@@ -118,23 +107,13 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
 
     console.log("Successfully authenticated with blockchain verification");
 
-    res.clearCookie(COOKIE_NAME, { 
-      httpOnly: true, 
-      domain: "localhost", 
-      signed: true, 
-      path: "/" 
-    });
-
+    
     const token = createToken(user._id.toString(), user.email, "7d");
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-    res.cookie(COOKIE_NAME, token, {
-      path: "/",
-      domain: "localhost",
-      expires,
-      httpOnly: true,
-      signed: true,
-    });
+
+    res.clearCookie(COOKIE_NAME, getCookieOptions());
+    res.cookie(COOKIE_NAME, token, getCookieOptions());
+
+    
 
     return res.status(200).json({ message: "OK", name: user.name, email: user.email });
   } catch (error) {
@@ -176,13 +155,10 @@ export const userLogout = async (req: Request, res: Response, next: NextFunction
       return res.status(401).send("Permissions didn't match");
     }
 
-    // Properly clear the cookie by setting an expired date
+    // In userLogout function:
     res.cookie(COOKIE_NAME, "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      signed: true,
-      path: "/",
-      expires: new Date(0) // <-- Expire immediately
+      ...getCookieOptions(),
+      expires: new Date(0)
     });
 
     return res.status(200).json({ message: "Logout successful" });
