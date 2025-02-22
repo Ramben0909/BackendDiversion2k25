@@ -36,8 +36,8 @@ export const generateChatCompletion = async (
 
     // Send the request to both APIs
     const [response1, response2] = await Promise.all([
-      axios.post("https://query-bridge.onrender.com/api/v1/text", payload),
-      axios.post("https://query-bridge.onrender.com/api/v1/sql", payload),
+      axios.post("https://query-bridge-production.up.railway.app//api/v1/text", payload),
+      axios.post("https://query-bridge-production.up.railway.app//api/v1/sql", payload),
     ]);
 
     const chatResponse1 = response1.data.response;
