@@ -10,7 +10,7 @@ config();
 const app = express();
 
 // Middlewares
-app.use(cors({ origin: "https://frontend-2k25.pages.dev/", credentials: true }));
+app.use(cors({ origin: "https://trackintel.pages.dev/", credentials: true }));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
