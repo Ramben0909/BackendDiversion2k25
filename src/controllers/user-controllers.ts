@@ -110,7 +110,7 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
     
     const token = createToken(user._id.toString(), user.email, "7d");
 
-    res.clearCookie(COOKIE_NAME, getCookieOptions());
+    // res.clearCookie(COOKIE_NAME, getCookieOptions());
     res.cookie(COOKIE_NAME, token, getCookieOptions());
 
     
