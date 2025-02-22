@@ -17,6 +17,7 @@ export const createToken = (id: string, email: string, expiresIn: string | numbe
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.signedCookies[COOKIE_NAME];
+  console.log(token);
 
   if (!token || token.trim() === "") {
     return res.status(401).json({ message: "Token Not Received" });
@@ -35,6 +36,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     });
 
     res.locals.jwtData = decoded;
+    console.log(decoded);
     return next();
   } catch (error) {
     return res.status(401).json({ message: "Token Expired or Invalid" });

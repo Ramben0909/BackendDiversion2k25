@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User.js";
 import axios from "axios";
+import { config } from "dotenv";
+
+config();
 
 const SESSION_ID = "hardcoded-session-id-12339";
 
@@ -33,8 +36,8 @@ export const generateChatCompletion = async (
 
     // Send the request to both APIs
     const [response1, response2] = await Promise.all([
-      axios.post("process.env.Link1", payload),
-      axios.post("process.env.Link2", payload),
+      axios.post("https://query-bridge.onrender.com///api/v1/text", payload),
+      axios.post("https://query-bridge.onrender.com///api/v1/sql", payload),
     ]);
 
     const chatResponse1 = response1.data.response;
