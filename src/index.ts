@@ -7,7 +7,6 @@ connectToDatabase()
     const server = app.listen(PORT, async () => {
       console.log(`Server Open & Connected To Database 🤟`);
       console.log(`Server running on port ${PORT}`);
-      
       // Wait a bit for server to fully initialize
       await new Promise(resolve => setTimeout(resolve, 1000));
     });

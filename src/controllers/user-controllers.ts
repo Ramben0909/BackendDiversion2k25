@@ -145,6 +145,10 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
 
 export const verifyUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       return res.status(401).send("User not registered OR Token malfunctioned");
@@ -152,6 +156,7 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
     if (user._id.toString() !== res.locals.jwtData.id) {
       return res.status(401).send("Permissions didn't match");
     }
+
     return res.status(200).json({ message: "OK", name: user.name, email: user.email });
   } catch (error) {
     console.log(error);
@@ -159,17 +164,26 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+
 export const userLogout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       return res.status(401).send("User not registered OR Token malfunctioned");
     }
+
     if (user._id.toString() !== res.locals.jwtData.id) {
       return res.status(401).send("Permissions didn't match");
     }
 
-    res.clearCookie(COOKIE_NAME, { httpOnly: true, domain: "localhost", signed: true, path: "/" });
+    // Properly clear the cookie by setting an expired date
+    res.cookie(COOKIE_NAME, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      signed: true,
+      path: "/",
+      expires: new Date(0) // <-- Expire immediately
+    });
 
     return res.status(200).json({ message: "Logout successful" });
   } catch (error) {
@@ -177,3 +191,4 @@ export const userLogout = async (req: Request, res: Response, next: NextFunction
     return res.status(500).json({ message: "ERROR", cause: (error as Error).message });
   }
 };
+

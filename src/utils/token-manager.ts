@@ -17,6 +17,7 @@ export const createToken = (id: string, email: string, expiresIn: string | numbe
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.signedCookies[COOKIE_NAME];
+
   if (!token || token.trim() === "") {
     return res.status(401).json({ message: "Token Not Received" });
   }
@@ -25,23 +26,18 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     return res.status(500).json({ message: "JWT_SECRET is not set on the server" });
   }
 
-  interface JwtPayload {
-    id: string;
-    email: string;
-  }
+  try {
+    const decoded = await new Promise<jwt.JwtPayload>((resolve, reject) => {
+      jwt.verify(token, process.env.JWT_SECRET as jwt.Secret, {}, (err, decoded) => {
+        if (err) reject(err);
+        else resolve(decoded as jwt.JwtPayload);
+      });
+    });
 
-  interface JwtVerifyCallback {
-    (err: jwt.VerifyErrors | null, decoded: JwtPayload | undefined): void;
+    res.locals.jwtData = decoded;
+    return next();
+  } catch (error) {
+    return res.status(401).json({ message: "Token Expired or Invalid" });
   }
-
-  jwt.verify(token, process.env.JWT_SECRET as jwt.Secret, {}, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Token Expired" });
-    } else if (typeof decoded === 'object' && decoded !== null) {
-      res.locals.jwtData = decoded as JwtPayload;
-      return next();
-    } else {
-      return res.status(401).json({ message: "Invalid Token" });
-    }
-  });
 };
+
