@@ -5,7 +5,7 @@ import dotnev from "dotenv";
 
 dotnev.config();
 
-const SESSION_ID = "hardcoded-session-id-12420";
+const SESSION_ID = "hardcoded-session-id-12489";
 
 export const generateChatCompletion = async (
   req: Request,
